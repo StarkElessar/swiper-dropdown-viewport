@@ -22,7 +22,7 @@ ul {
 }
 
 .swiper {
-	overflow: unset;
+	overflow: clip visible;
 	border: 1px solid #eee;
 	border-radius: 20px;
 	padding: 20px;
@@ -36,12 +36,13 @@ ul {
 	position: relative;
 }
 
-.dropdown-wrapper.active .dropdown-list-wrapper {
-	display: block;
+.dropdown-trigger,
+.dropdown-item-label {
+	user-select: none;
+	padding: 10px;
 }
 
 .dropdown-trigger {
-	padding: 10px;
 	border-radius: 10px;
 	border: 1px solid #ddd;
 }
@@ -56,6 +57,8 @@ ul {
 	border-radius: 10px;
 	border: 1px solid #ddd;
 	overflow: hidden;
+	background-color: #fff;
+	z-index: 10;
 }
 
 .dropdown-list {
@@ -67,7 +70,6 @@ ul {
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
-	padding: 10px;
 	width: 100%;
 }
 
