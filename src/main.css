@@ -1,0 +1,78 @@
+@import "swiper/swiper-bundle.css";
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border: 0;
+}
+
+body {
+	padding-block: 10rem;
+}
+
+ul {
+	list-style-type: none;
+}
+
+.container {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding-inline: 40px;
+}
+
+.swiper {
+	overflow: unset;
+	border: 1px solid #eee;
+	border-radius: 20px;
+	padding: 20px;
+}
+
+.swiper-slide {
+	max-width: max-content;
+}
+
+.dropdown-wrapper {
+	position: relative;
+}
+
+.dropdown-wrapper.active .dropdown-list-wrapper {
+	display: block;
+}
+
+.dropdown-trigger {
+	padding: 10px;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+}
+
+.dropdown-list-wrapper {
+	margin-top: 5px;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	display: none;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+	overflow: hidden;
+}
+
+.dropdown-list {
+	overflow: hidden auto;
+	max-height: 160px;
+}
+
+.dropdown-item-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+	width: 100%;
+}
+
+@media (any-hover: hover) {
+	.dropdown-item-label:hover {
+		background-color: color-mix(in srgb, #000, transparent 95%);
+	}
+}
