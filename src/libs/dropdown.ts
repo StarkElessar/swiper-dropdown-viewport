@@ -40,23 +40,23 @@ export const DEFAULT_DROPDOWN_OPTIONS: DropdownOptions = {
 export class Dropdown implements IDropdown {
 	private static instances = new Map<string, Dropdown>();
 	private _eventHandlers = new Map<EventType, Set<EventCallback>>();
-	private readonly _options: DropdownOptions;
+	protected options: DropdownOptions;
 	private _isOpen = false;
-	private readonly _element: HTMLElement | null;
+	private readonly _originalSelect: HTMLElement | null;
 	private readonly _wrapper = document.createElement('div');
 	private readonly _triggerElement = document.createElement('span');
 	private readonly _listWrapperElement = document.createElement('div');
 
 	constructor(selector: DropdownSelector, options: Partial<DropdownOptions> = {}) {
-		this._element = selector instanceof HTMLElement ? selector : document.querySelector(selector);
+		this._originalSelect = selector instanceof HTMLElement ? selector : document.querySelector(selector);
 
-		if (this._element === null) {
+		if (this._originalSelect === null) {
 			throw new Error(`No dropdown element found for selector "${selector}"`);
 		}
 
-		this._options = Object.assign(DEFAULT_DROPDOWN_OPTIONS, options);
-		this.init(this._element);
-		Dropdown.instances.set(this._element.id, this);
+		this.options = { ...DEFAULT_DROPDOWN_OPTIONS, ...options };
+		this.init(this._originalSelect);
+		Dropdown.instances.set(this._originalSelect.id, this);
 	}
 
 	private init(element: HTMLElement) {
@@ -65,7 +65,7 @@ export class Dropdown implements IDropdown {
 			triggerClassName,
 			wrapperClassName,
 			listWrapperClassName
-		} = this._options;
+		} = this.options;
 
 		this._wrapper.classList.add(wrapperClassName);
 		element.parentNode?.insertBefore(this._wrapper, element);
@@ -85,7 +85,7 @@ export class Dropdown implements IDropdown {
 	public toggleDropdown(_?: MouseEvent, delay?: number) {
 		setTimeout(() => {
 			this._isOpen = !this._isOpen;
-			this._wrapper.classList.toggle(this._options.activeClassName);
+			this._wrapper.classList.toggle(this.options.activeClassName);
 			this._listWrapperElement.style.display = this._isOpen ? 'block' : 'none';
 			this.trigger(this._isOpen ? 'open' : 'close', {
 				wrapperElement: this._wrapper,
@@ -111,7 +111,7 @@ export class Dropdown implements IDropdown {
 	public closeDropdown() {
 		if (this._isOpen) {
 			this._isOpen = false;
-			this._wrapper.classList.remove(this._options.activeClassName);
+			this._wrapper.classList.remove(this.options.activeClassName);
 			this._listWrapperElement.style.display = 'none';
 			this.trigger('close', {
 				wrapperElement: this._wrapper,

@@ -14,6 +14,14 @@ interface Options extends DropdownOptions {
 	scrollHint: boolean;
 }
 
+const DEFAULT_TEXTS = {
+	PLACEHOLDER: 'Выберите опции',
+	ALL_SELECTED: 'Выбраны все',
+	SELECTED_COUNT: 'Выбрано:',
+	ALL_OPTION_TEXT: 'Все',
+	ALL_OPTION_VALUE: '-1'
+} as const;
+
 const DEFAULT_OPTIONS: Options = {
 	...DEFAULT_DROPDOWN_OPTIONS,
 	listClassName: 'dropdown-list',
@@ -24,12 +32,13 @@ const DEFAULT_OPTIONS: Options = {
 };
 
 export class CheckboxSelection extends Dropdown {
-	private readonly _checkboxSelectionOptions: Options;
+	protected override options: Options;
+	private _selectedValues = new Set<string>();
 	private readonly _listElement = document.createElement('ul');
 
 	constructor(selector: string | HTMLElement, options: Partial<Options> = {}) {
 		super(selector, options);
-		this._checkboxSelectionOptions = Object.assign(DEFAULT_OPTIONS, options);
+		this.options = { ...DEFAULT_OPTIONS, ...options };
 		this.initialize();
 	}
 
@@ -39,9 +48,10 @@ export class CheckboxSelection extends Dropdown {
 			listItemClassName,
 			listClassName,
 			itemLabelClassName
-		} = this._checkboxSelectionOptions;
+		} = this.options;
 
 		this._listElement.classList.add(listClassName);
+		this._listElement.onchange = this.handleOptionsChange;
 		this._listElement.innerHTML = dataSource.reduce((acc, item) => {
 			return acc + `
 				<li id="${item.id}" class="${listItemClassName}">
@@ -59,9 +69,46 @@ export class CheckboxSelection extends Dropdown {
 
 	public toggleDropdown() {
 		super.toggleDropdown.call(this);
-		this._checkboxSelectionOptions.scrollHint && (
+		this.options.scrollHint && (
 			setTimeout(this.checkScroll)
 		);
+	}
+
+	private handleOptionsChange = ({ target }: Event) => {
+		if (target instanceof HTMLInputElement) {
+			if (target.value === DEFAULT_TEXTS.ALL_OPTION_VALUE) {
+				this.handleSelectAll(target.checked);
+			}
+			else {
+				this.handleSingleOptionChange(target);
+			}
+		}
+	}
+
+	private handleSelectAll(checked: boolean) {
+		const selector = `input[type="checkbox"]:not([value="${DEFAULT_TEXTS.ALL_OPTION_VALUE}"])`
+		const checkboxes = this._listElement.querySelectorAll<HTMLInputElement>(selector);
+
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = checked;
+			checked ? this._selectedValues.add(checkbox.value) : this._selectedValues.delete(checkbox.value);
+		});
+	}
+
+	private handleSingleOptionChange(checkbox: HTMLInputElement) {
+		const allCheckbox = this._listElement.querySelector<HTMLInputElement>(`input[value="${DEFAULT_TEXTS.ALL_OPTION_VALUE}"]`);
+
+		if (checkbox.checked) {
+			this._selectedValues.add(checkbox.value);
+		}
+		else {
+			allCheckbox && (allCheckbox.checked = false);
+		}
+
+		const checkboxSelector = `input[type="checkbox"]:not([value="${DEFAULT_TEXTS.ALL_OPTION_VALUE}"]`;
+		const checkboxes = this._listElement.querySelectorAll<HTMLInputElement>(checkboxSelector);
+		const allChecked = [...checkboxes].every(cb => cb.checked);
+		allCheckbox && (allCheckbox.checked = allChecked);
 	}
 
 	private checkScroll = () => {
@@ -76,7 +123,7 @@ export class CheckboxSelection extends Dropdown {
 	};
 
 	private observeScrollHint = () => {
-		if (this._checkboxSelectionOptions.scrollHint) {
+		if (this.options.scrollHint) {
 			this._listElement.insertAdjacentHTML('beforeend', `
 				<li class="scroll-hint" id="scrollHint"></li>
 				<li id="observeTarget" style="height: 1px"></li>

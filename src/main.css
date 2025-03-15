@@ -49,6 +49,7 @@ ul {
 
 .dropdown-trigger,
 .dropdown-item-label {
+	cursor: pointer;
 	display: inline-flex;
 	user-select: none;
 	padding: 10px;
@@ -83,48 +84,49 @@ ul {
 	align-items: center;
 	gap: 10px;
 	width: 100%;
-}
 
-.dropdown-item-label input[type=checkbox] {
-	position: relative;
-	color: #333;
-	appearance: none;
-	width: 20px;
-	aspect-ratio: 1;
-	border: 1px solid currentColor;
-	border-radius: 2px;
-	transition: color .2s ease-in-out;
-}
-
-.dropdown-item-label input[type=checkbox]:checked {
-	color: var(--accent-color);
-}
-
-.dropdown-item-label input[type=checkbox]:checked::before {
-	background-color: currentColor;
-}
-
-.dropdown-item-label input[type=checkbox]::before {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	content: "";
-	width: 14px;
-	aspect-ratio: 1;
-	border-radius: 1px;
-	background-color: transparent;
-	transition: background-color .2s ease-in-out;
-}
-
-@media (any-hover: hover) {
-	.dropdown-item-label:hover {
-		background-color: color-mix(in srgb, #000, transparent 97%);
+	@media (any-hover: hover) {
+		&:hover {
+			background-color: color-mix(in srgb, #000, transparent 97%);
+		}
 	}
-}
 
-.dropdown-item-label:active {
-	background-color: color-mix(in srgb, #000, transparent 94%);
+	&:active {
+		background-color: color-mix(in srgb, #000, transparent 94%);
+	}
+
+	input[type=checkbox] {
+		position: relative;
+		color: #333;
+		appearance: none;
+		width: 20px;
+		height: 20px;
+		aspect-ratio: 1;
+		border: 1px solid currentColor;
+		border-radius: 2px;
+		transition: color .2s ease-in-out;
+
+		&:checked {
+			color: var(--accent-color);
+
+			&::before {
+				background-color: currentColor;
+			}
+		}
+
+		&::before {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			content: "";
+			width: 14px;
+			aspect-ratio: 1;
+			border-radius: 1px;
+			background-color: transparent;
+			transition: background-color .2s ease-in-out;
+		}
+	}
 }
 
 /* Анимация подсказки скролла */
