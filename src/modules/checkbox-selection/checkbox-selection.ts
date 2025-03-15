@@ -67,13 +67,11 @@ export class CheckboxSelection extends Dropdown {
 	private checkScroll = () => {
 		const list = this._listElement;
 		const scrollHint = list.querySelector<HTMLLIElement>('#scrollHint');
-		const isEnd = list.scrollHeight > list.clientHeight + 5;
+		const observeTarget = list.querySelector<HTMLLIElement>('#observeTarget');
 
-		if (isEnd) {
-			scrollHint?.classList.remove('hidden');
-		}
-		else {
-			scrollHint?.classList.add('hidden');
+		if (list.scrollHeight <= list.clientHeight + 5) {
+			observeTarget?.remove();
+			scrollHint?.remove();
 		}
 	};
 
@@ -88,23 +86,14 @@ export class CheckboxSelection extends Dropdown {
 			const scrollHint = this._listElement.querySelector<HTMLLIElement>('#scrollHint');
 
 			if (observerTarget && scrollHint) {
-				const observer = new IntersectionObserver(
-					([entry]) => {
-						if (entry.isIntersecting) {
-							scrollHint?.classList.add('hidden');
-						}
-						else {
-							scrollHint?.classList.remove('hidden');
-						}
-					},
-					{
-						root: this._listElement,
-						threshold: [0.2],
-						rootMargin: '5px'
-					}
-				);
+				const observer = new IntersectionObserver(([entry]) => {
+					scrollHint?.classList.toggle('hidden', entry.isIntersecting);
+				}, {
+					root: this._listElement,
+					threshold: [0.2],
+					rootMargin: '5px'
+				});
 
-				// Начинаем наблюдение
 				observer.observe(observerTarget);
 			}
 		}
