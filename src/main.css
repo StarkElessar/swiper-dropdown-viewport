@@ -1,6 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@400&display=swap");
 @import "swiper/swiper-bundle.css";
 
+:root {
+	--accent-color: #fe8d59;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -93,7 +97,7 @@ ul {
 }
 
 .dropdown-item-label input[type=checkbox]:checked {
-	color: #fe8d59;
+	color: var(--accent-color);
 }
 
 .dropdown-item-label input[type=checkbox]:checked::before {
@@ -115,6 +119,46 @@ ul {
 
 @media (any-hover: hover) {
 	.dropdown-item-label:hover {
-		background-color: color-mix(in srgb, #000, transparent 95%);
+		background-color: color-mix(in srgb, #000, transparent 97%);
+	}
+}
+
+.dropdown-item-label:active {
+	background-color: color-mix(in srgb, #000, transparent 94%);
+}
+
+/* Анимация подсказки скролла */
+.scroll-hint {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 30px;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 1;
+	transition: opacity 0.3s ease-in-out;
+	pointer-events: none;
+}
+
+.scroll-hint::after {
+	content: "⇕";
+	font-size: 20px;
+	color: var(--accent-color);
+	animation: bounce 1.5s infinite;
+}
+
+.scroll-hint.hidden {
+	opacity: 0;
+}
+
+@keyframes bounce {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-5px);
 	}
 }

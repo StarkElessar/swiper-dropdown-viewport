@@ -10,7 +10,7 @@ type EventCallback = (e: EventData) => void;
 export interface IDropdown {
 	bind(eventType: EventType, callback: EventCallback): void;
 	unbind(eventType: EventType, callback: EventCallback): void;
-	toggleDropdown: (event: MouseEvent, delay?: number) => void;
+	toggleDropdown: (event?: MouseEvent, delay?: number) => void;
 	closeDropdown: () => void;
 	get(id: string): Dropdown | null;
 	get isOpen(): boolean;
@@ -74,7 +74,7 @@ export class Dropdown implements IDropdown {
 
 		this._triggerElement.classList.add(triggerClassName);
 		this._triggerElement.textContent = label;
-		this._triggerElement.onclick = this.toggleDropdown;
+		this._triggerElement.onclick = this.toggleDropdown.bind(this);
 
 		this._listWrapperElement.classList.add(listWrapperClassName);
 
@@ -82,7 +82,7 @@ export class Dropdown implements IDropdown {
 		this._wrapper.append(this._listWrapperElement);
 	}
 
-	public toggleDropdown = (_: MouseEvent, delay?: number) => {
+	public toggleDropdown(_?: MouseEvent, delay?: number) {
 		setTimeout(() => {
 			this._isOpen = !this._isOpen;
 			this._wrapper.classList.toggle(this._options.activeClassName);

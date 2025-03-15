@@ -11,6 +11,7 @@ interface Options extends DropdownOptions {
 	listItemClassName: string;
 	itemLabelClassName: string;
 	dataSource: DataSourceItem[];
+	scrollHint: boolean;
 }
 
 const DEFAULT_OPTIONS: Options = {
@@ -18,7 +19,8 @@ const DEFAULT_OPTIONS: Options = {
 	listClassName: 'dropdown-list',
 	listItemClassName: 'dropdown-item',
 	itemLabelClassName: 'dropdown-item-label',
-	dataSource: []
+	dataSource: [],
+	scrollHint: true
 };
 
 export class CheckboxSelection extends Dropdown {
@@ -36,7 +38,7 @@ export class CheckboxSelection extends Dropdown {
 			dataSource,
 			listItemClassName,
 			listClassName,
-			itemLabelClassName,
+			itemLabelClassName
 		} = this._checkboxSelectionOptions;
 
 		this._listElement.classList.add(listClassName);
@@ -52,5 +54,59 @@ export class CheckboxSelection extends Dropdown {
 		}, '');
 
 		this.listWrapperElement.append(this._listElement);
+		this.observeScrollHint();
 	}
+
+	public toggleDropdown() {
+		super.toggleDropdown.call(this);
+		this._checkboxSelectionOptions.scrollHint && (
+			setTimeout(this.checkScroll)
+		);
+	}
+
+	private checkScroll = () => {
+		const list = this._listElement;
+		const scrollHint = list.querySelector<HTMLLIElement>('#scrollHint');
+		const isEnd = list.scrollHeight > list.clientHeight + 5;
+
+		if (isEnd) {
+			scrollHint?.classList.remove('hidden');
+		}
+		else {
+			scrollHint?.classList.add('hidden');
+		}
+	};
+
+	private observeScrollHint = () => {
+		if (this._checkboxSelectionOptions.scrollHint) {
+			this._listElement.insertAdjacentHTML('beforeend', `
+				<li class="scroll-hint" id="scrollHint"></li>
+				<li id="observeTarget" style="height: 1px"></li>
+			`);
+
+			const observerTarget = this._listElement.querySelector<HTMLLIElement>('#observeTarget');
+			const scrollHint = this._listElement.querySelector<HTMLLIElement>('#scrollHint');
+
+			if (observerTarget && scrollHint) {
+				const observer = new IntersectionObserver(
+					([entry]) => {
+						if (entry.isIntersecting) {
+							scrollHint?.classList.add('hidden');
+						}
+						else {
+							scrollHint?.classList.remove('hidden');
+						}
+					},
+					{
+						root: this._listElement,
+						threshold: [0.2],
+						rootMargin: '5px'
+					}
+				);
+
+				// Начинаем наблюдение
+				observer.observe(observerTarget);
+			}
+		}
+	};
 }
