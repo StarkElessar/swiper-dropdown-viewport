@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@400&display=swap");
 @import "swiper/swiper-bundle.css";
 
 * {
@@ -9,6 +10,11 @@
 
 body {
 	padding-block: 10rem;
+	font-family: "Roboto", sans-serif;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 1;
+	background-color: #f2f8fb;
 }
 
 ul {
@@ -26,6 +32,7 @@ ul {
 	border: 1px solid #eee;
 	border-radius: 20px;
 	padding: 20px;
+	background-color: #fff;
 }
 
 .swiper-slide {
@@ -38,6 +45,7 @@ ul {
 
 .dropdown-trigger,
 .dropdown-item-label {
+	display: inline-flex;
 	user-select: none;
 	padding: 10px;
 }
@@ -48,11 +56,11 @@ ul {
 }
 
 .dropdown-list-wrapper {
+	width: max-content;
+	min-width: 100%;
 	margin-top: 5px;
 	position: absolute;
 	top: 100%;
-	left: 0;
-	right: 0;
 	display: none;
 	border-radius: 10px;
 	border: 1px solid #ddd;
@@ -67,10 +75,42 @@ ul {
 }
 
 .dropdown-item-label {
-	display: inline-flex;
+	text-wrap: nowrap;
 	align-items: center;
 	gap: 10px;
 	width: 100%;
+}
+
+.dropdown-item-label input[type=checkbox] {
+	position: relative;
+	color: #333;
+	appearance: none;
+	width: 20px;
+	aspect-ratio: 1;
+	border: 1px solid currentColor;
+	border-radius: 2px;
+	transition: color .2s ease-in-out;
+}
+
+.dropdown-item-label input[type=checkbox]:checked {
+	color: #fe8d59;
+}
+
+.dropdown-item-label input[type=checkbox]:checked::before {
+	background-color: currentColor;
+}
+
+.dropdown-item-label input[type=checkbox]::before {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	content: "";
+	width: 14px;
+	aspect-ratio: 1;
+	border-radius: 1px;
+	background-color: transparent;
+	transition: background-color .2s ease-in-out;
 }
 
 @media (any-hover: hover) {

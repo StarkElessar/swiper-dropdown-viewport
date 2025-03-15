@@ -54,6 +54,3 @@ export class CheckboxSelection extends Dropdown {
 		this.listWrapperElement.append(this._listElement);
 	}
 }
-
-// @ts-ignore
-window.CheckboxSelection = CheckboxSelection;
