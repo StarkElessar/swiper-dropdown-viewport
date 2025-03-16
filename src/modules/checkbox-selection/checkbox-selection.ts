@@ -38,7 +38,7 @@ const DEFAULT_OPTIONS: Options = {
 	scrollHint: true
 };
 
-export class CheckboxSelection<T = Events> extends Dropdown<T> {
+export class CheckboxSelection extends Dropdown<Events> {
 	protected override options: Options;
 	private _selectedValues = new Set<string>();
 	private readonly _listElement = document.createElement('ul');
@@ -89,7 +89,7 @@ export class CheckboxSelection<T = Events> extends Dropdown<T> {
 			else {
 				this.handleSingleOptionChange(target);
 			}
-			this.trigger(EVENTS.CHANGE as T, { selectedValues: this._selectedValues });
+			this.trigger(EVENTS.CHANGE, { selectedValues: this._selectedValues });
 		}
 	};
 
