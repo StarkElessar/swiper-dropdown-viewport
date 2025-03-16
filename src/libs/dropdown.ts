@@ -12,7 +12,7 @@ interface EventData<T extends string = Events> {
 
 type EventCallback<T extends string = Events> = (e: EventData<T>) => void;
 
-export type DropdownSelector = string | HTMLElement;
+export type Selector = string | HTMLElement;
 
 export interface DropdownOptions {
 	label: string;
@@ -40,7 +40,7 @@ export class Dropdown<T extends string = Events> {
 	private readonly _triggerElement = document.createElement('span');
 	private readonly _listWrapperElement = document.createElement('div');
 
-	constructor(selector: DropdownSelector, options: Partial<DropdownOptions> = {}) {
+	constructor(selector: Selector, options: Partial<DropdownOptions> = {}) {
 		this._originalSelect = selector instanceof HTMLElement ? selector : document.querySelector(selector);
 
 		if (this._originalSelect === null) {
@@ -79,7 +79,7 @@ export class Dropdown<T extends string = Events> {
 		setTimeout(() => {
 			this._isOpen = !this._isOpen;
 			this._wrapper.classList.toggle(this.options.activeClassName);
-			this._listWrapperElement.style.display = this._isOpen ? 'block' : 'none';
+
 			this.trigger(this._isOpen ? DROPDOWN_EVENTS.OPEN : DROPDOWN_EVENTS.CLOSE, {
 				wrapperElement: this._wrapper,
 				listWrapperElement: this._listWrapperElement
@@ -105,7 +105,7 @@ export class Dropdown<T extends string = Events> {
 		if (this._isOpen) {
 			this._isOpen = false;
 			this._wrapper.classList.remove(this.options.activeClassName);
-			this._listWrapperElement.style.display = 'none';
+
 			this.trigger(DROPDOWN_EVENTS.CLOSE, {
 				wrapperElement: this._wrapper,
 				listWrapperElement: this._listWrapperElement

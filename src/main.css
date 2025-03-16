@@ -25,6 +25,10 @@ ul {
 	list-style-type: none;
 }
 
+input {
+	outline: none;
+}
+
 .container {
 	max-width: 1280px;
 	margin: 0 auto;
@@ -45,6 +49,14 @@ ul {
 
 .dropdown-wrapper {
 	position: relative;
+
+	&.dropdown-active {
+		.dropdown-list-wrapper {
+			visibility: visible;
+			margin-top: 5px;
+			pointer-events: auto;
+		}
+	}
 }
 
 .dropdown-trigger,
@@ -63,15 +75,19 @@ ul {
 .dropdown-list-wrapper {
 	width: max-content;
 	min-width: 100%;
-	margin-top: 5px;
+	margin-top: 15px;
 	position: absolute;
 	top: 100%;
-	display: none;
+	visibility: hidden;
 	border-radius: 10px;
 	border: 1px solid #ddd;
 	overflow: hidden;
 	background-color: #fff;
 	z-index: 10;
+	pointer-events: none;
+	transition-property: visibility, margin-top;
+	transition-timing-function: ease-in-out;
+	transition-duration: 0.2s;
 }
 
 .dropdown-list {
@@ -154,6 +170,55 @@ ul {
 
 .scroll-hint.hidden {
 	opacity: 0;
+}
+
+.range-dropdown-inputs {
+	--radius: 6px;
+	width: 240px;
+	display: flex;
+	align-items: center;
+	padding: 10px;
+
+	:first-child {
+		border-top-left-radius: var(--radius);
+		border-bottom-left-radius: var(--radius);
+	}
+
+	:last-child {
+		border-top-right-radius: var(--radius);
+		border-bottom-right-radius: var(--radius);
+	}
+}
+
+.range-dropdown-input {
+	--border-color: #eee;
+	appearance: textfield;
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		appearance: none;
+	}
+	padding: 10px;
+	flex: 1 1 0;
+	width: 100%;
+	border: 1px solid var(--border-color);
+	transition: border-color 0.3s ease-in-out;
+
+	&:not(:disabled, :focus) {
+		@media (any-hover: hover) {
+			&:hover {
+				border-color: color-mix(in srgb, var(--accent-color), #fff 80%);
+			}
+		}
+	}
+
+	&:focus {
+		border-color: var(--accent-color);
+	}
+
+	&:disabled {
+		opacity: 60%;
+	}
 }
 
 @keyframes bounce {

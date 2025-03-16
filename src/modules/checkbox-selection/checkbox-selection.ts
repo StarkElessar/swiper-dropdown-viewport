@@ -1,4 +1,4 @@
-import { Dropdown, type DropdownOptions, DEFAULT_DROPDOWN_OPTIONS, DROPDOWN_EVENTS } from '../../libs/dropdown.ts';
+import { Dropdown, type DropdownOptions, type Selector, DEFAULT_DROPDOWN_OPTIONS, DROPDOWN_EVENTS } from '../../libs/dropdown.ts';
 
 const EVENTS = {
 	...DROPDOWN_EVENTS,
@@ -43,8 +43,8 @@ export class CheckboxSelection extends Dropdown<Events> {
 	private _selectedValues = new Set<string>();
 	private readonly _listElement = document.createElement('ul');
 
-	constructor(selector: string | HTMLElement, options: Partial<Options> = {}) {
-		super(selector, options);
+	constructor(selector: Selector, options: Partial<Options> = {}) {
+		super(selector, { ...DEFAULT_OPTIONS, ...options });
 		this.options = { ...DEFAULT_OPTIONS, ...options };
 		this.initialize();
 	}

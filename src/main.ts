@@ -1,7 +1,8 @@
 import Swiper from 'swiper';
 import { FreeMode } from 'swiper/modules';
 import { CheckboxSelection } from './modules/checkbox-selection';
-import { tematics } from './modules/data.ts';
+import { tematics } from './modules/data';
+import { RangeDropdown } from './modules/range-dropdown';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const ddTematics = new CheckboxSelection('#test-1', {
@@ -25,28 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		]
 	});
 
-	function generateRanges(start: number, end: number, step: number) {
-		let ranges = [];
-		for (let i = start; i <= end; i += step) {
-			let rangeEnd = i + step - 1;
-			if (rangeEnd > end) {
-				rangeEnd = end;
-			} // Убедимся, что последний диапазон не превышает end
-			ranges.push({
-				id: `${i}-${rangeEnd}`,
-				value: `${i}-${rangeEnd}`,
-				label: `${i}-${rangeEnd} детей`
-			});
-		}
-		return ranges;
-	}
-
-	new CheckboxSelection('#test-3', {
+	const childrenDropdown = new RangeDropdown('#test-3', {
 		label: 'Количество детей',
-		dataSource: [
-			{ id: 'all', value: '-1', label: 'Все' },
-			...generateRanges(1, 50, 5)
-		]
+		nameFrom: 'childFrom',
+		nameTo: 'childTo',
+	});
+
+	childrenDropdown.bind('change', (data) => {
+		console.log('childrenDropdown change >> ', data);
 	});
 
 	new CheckboxSelection('#test-4', {
@@ -70,25 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		]
 	});
 
-	new CheckboxSelection('#test-6', {
+	const timeDropdown = new RangeDropdown('#test-6', {
 		label: 'Время экскурсии, час',
-		dataSource: [
-			{ id: 'all', value: '-1', label: 'Все' },
-			{ id: '1', value: '1', label: '0-5 часа' },
-			{ id: '2', value: '2', label: '6-10 часа' },
-			{ id: '3', value: '3', label: '11-20 часа' },
-		]
+		nameFrom: 'timeFrom',
+		nameTo: 'timeTo',
 	});
 
-	new CheckboxSelection('#test-7', {
-		label: 'Цена',
-		dataSource: [
-			{ id: 'all', value: '-1', label: 'Все' },
-			{ id: '1', value: '1', label: '1000-2500 руб.' },
-			{ id: '2', value: '2', label: '2501-4000 руб.' },
-			{ id: '3', value: '3', label: '4001+ руб.' },
-		]
+	timeDropdown.bind('change', (data) => {
+		console.log('timeDropdown change >> ', data);
 	});
+
+	const priceDropdown = new RangeDropdown('#test-7', {
+		label: 'Цена, ₽',
+		nameFrom: 'priceFrom',
+		nameTo: 'priceTo',
+	});
+
+	priceDropdown.bind('change', (data) => {
+		console.log('priceDropdown change >> ', data);
+	})
 
 	const sliderContainer = document.getElementById('swiper');
 
@@ -109,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			slide.addEventListener('click', () => {
 				const slideRect = slide.getBoundingClientRect();
 				const swiperRect = swiper.el.getBoundingClientRect();
-
 				// Проверяем, если слайд частично выходит за границы контейнера
 				if (slideRect.left < swiperRect.left || slideRect.right > swiperRect.right) {
 					swiper.slideTo(index);
@@ -125,11 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
 					const dropdownListRect = listWrapperElement.getBoundingClientRect();
 
 					if (swiperContainerRect.right <= dropdownListRect.right) {
-						console.log('right position');
 						listWrapperElement.style.right = '0';
 					}
 					else if (dropdownListRect.left <= swiperContainerRect.left) {
-						console.log('left position');
 						listWrapperElement.style.left = '0';
 					}
 				};
@@ -138,11 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				(swiperEvents.isAnimating) && (
 					swiper.once('slideChangeTransitionEnd', updatePosition)
 				);
-			});
-
-			dropdown?.bind('close', ({ listWrapperElement }) => {
-				listWrapperElement.style.left = 'unset';
-				listWrapperElement.style.right = 'unset';
 			});
 		});
 	}
