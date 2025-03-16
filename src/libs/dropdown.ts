@@ -1,21 +1,33 @@
-type EventType = 'open' | 'close';
+export const DROPDOWN_EVENTS = {
+	CLOSE: 'close',
+	OPEN: 'open',
+} as const;
 
-interface EventData {
-	sender: Dropdown;
+type Events = typeof DROPDOWN_EVENTS[keyof typeof DROPDOWN_EVENTS];
+
+interface EventData<T> {
+	sender: Dropdown<T>;
 	[key: string]: any;
 }
 
-type EventCallback = (e: EventData) => void;
+type EventCallback<T> = (e: EventData<T>) => void;
 
-export interface IDropdown {
-	bind(eventType: EventType, callback: EventCallback): void;
-	unbind(eventType: EventType, callback: EventCallback): void;
+export interface IDropdown<T> {
+	bind(eventType: T, callback: EventCallback<T>): void;
+
+	unbind(eventType: T, callback: EventCallback<T>): void;
+
 	toggleDropdown: (event?: MouseEvent, delay?: number) => void;
 	closeDropdown: () => void;
+
 	get(id: string): Dropdown | null;
+
 	get isOpen(): boolean;
+
 	get listWrapperElement(): HTMLElement;
+
 	get wrapperElement(): HTMLElement;
+
 	get triggerElement(): HTMLElement;
 }
 
@@ -34,12 +46,12 @@ export const DEFAULT_DROPDOWN_OPTIONS: DropdownOptions = {
 	triggerClassName: 'dropdown-trigger',
 	wrapperClassName: 'dropdown-wrapper',
 	activeClassName: 'dropdown-active',
-	listWrapperClassName: 'dropdown-list-wrapper',
+	listWrapperClassName: 'dropdown-list-wrapper'
 };
 
-export class Dropdown implements IDropdown {
-	private static instances = new Map<string, Dropdown>();
-	private _eventHandlers = new Map<EventType, Set<EventCallback>>();
+export class Dropdown<T = Events> implements IDropdown<T> {
+	private static instances = new Map<string, Dropdown<any>>();
+	private _eventHandlers = new Map<T, Set<EventCallback<T>>>();
 	protected options: DropdownOptions;
 	private _isOpen = false;
 	private readonly _originalSelect: HTMLElement | null;
@@ -87,9 +99,9 @@ export class Dropdown implements IDropdown {
 			this._isOpen = !this._isOpen;
 			this._wrapper.classList.toggle(this.options.activeClassName);
 			this._listWrapperElement.style.display = this._isOpen ? 'block' : 'none';
-			this.trigger(this._isOpen ? 'open' : 'close', {
+			this.trigger((this._isOpen ? DROPDOWN_EVENTS.OPEN : DROPDOWN_EVENTS.CLOSE) as T, {
 				wrapperElement: this._wrapper,
-				listWrapperElement: this._listWrapperElement,
+				listWrapperElement: this._listWrapperElement
 			});
 
 			if (this._isOpen) {
@@ -113,32 +125,30 @@ export class Dropdown implements IDropdown {
 			this._isOpen = false;
 			this._wrapper.classList.remove(this.options.activeClassName);
 			this._listWrapperElement.style.display = 'none';
-			this.trigger('close', {
+			this.trigger(DROPDOWN_EVENTS.CLOSE as T, {
 				wrapperElement: this._wrapper,
-				listWrapperElement: this._listWrapperElement,
+				listWrapperElement: this._listWrapperElement
 			});
 		}
 	}
 
-	public bind(eventType: EventType, callback: EventCallback) {
+	public bind(eventType: T, callback: EventCallback<T>) {
 		!this._eventHandlers.has(eventType) && (
 			this._eventHandlers.set(eventType, new Set())
 		);
 		this._eventHandlers.get(eventType)?.add(callback);
 	}
 
-	public unbind(eventType: EventType, callback: EventCallback) {
+	public unbind(eventType: T, callback: EventCallback<T>) {
 		this._eventHandlers.get(eventType)?.delete(callback);
 	}
 
-	private trigger(eventType: EventType, data: Omit<EventData, 'sender'>) {
-		const eventData: EventData = {
-			sender: this,
-			...data
-		};
-		this._eventHandlers.get(eventType)?.forEach(callback => callback(eventData));
+	protected trigger(eventType: T, data: Omit<EventData<T>, 'sender'>) {
+		this._eventHandlers.get(eventType)?.forEach(callback => (
+			callback({ sender: this, ...data }))
+		);
 	}
-	
+
 	public get wrapperElement() {
 		return this._wrapper;
 	}
@@ -146,7 +156,7 @@ export class Dropdown implements IDropdown {
 	public get triggerElement() {
 		return this._triggerElement;
 	}
-	
+
 	public get listWrapperElement() {
 		return this._listWrapperElement;
 	}

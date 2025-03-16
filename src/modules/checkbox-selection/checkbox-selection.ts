@@ -1,4 +1,11 @@
-import { Dropdown, type DropdownOptions, DEFAULT_DROPDOWN_OPTIONS } from '../../libs/dropdown.ts';
+import { Dropdown, type DropdownOptions, DEFAULT_DROPDOWN_OPTIONS, DROPDOWN_EVENTS } from '../../libs/dropdown.ts';
+
+const EVENTS = {
+	...DROPDOWN_EVENTS,
+	CHANGE: 'change'
+} as const;
+
+type Events = typeof EVENTS[keyof typeof EVENTS];
 
 interface DataSourceItem {
 	id: string;
@@ -31,7 +38,7 @@ const DEFAULT_OPTIONS: Options = {
 	scrollHint: true
 };
 
-export class CheckboxSelection extends Dropdown {
+export class CheckboxSelection<T = Events> extends Dropdown<T> {
 	protected override options: Options;
 	private _selectedValues = new Set<string>();
 	private readonly _listElement = document.createElement('ul');
@@ -82,11 +89,12 @@ export class CheckboxSelection extends Dropdown {
 			else {
 				this.handleSingleOptionChange(target);
 			}
+			this.trigger(EVENTS.CHANGE as T, { selectedValues: this._selectedValues });
 		}
-	}
+	};
 
 	private handleSelectAll(checked: boolean) {
-		const selector = `input[type="checkbox"]:not([value="${DEFAULT_TEXTS.ALL_OPTION_VALUE}"])`
+		const selector = `input[type="checkbox"]:not([value="${DEFAULT_TEXTS.ALL_OPTION_VALUE}"])`;
 		const checkboxes = this._listElement.querySelectorAll<HTMLInputElement>(selector);
 
 		checkboxes.forEach(checkbox => {

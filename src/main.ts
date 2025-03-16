@@ -4,9 +4,13 @@ import { CheckboxSelection } from './modules/checkbox-selection';
 import { tematics } from './modules/data.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
-	new CheckboxSelection('#test-1', {
+	const ddTematics = new CheckboxSelection('#test-1', {
 		label: 'Тематика экскурсии',
 		dataSource: tematics
+	});
+
+	ddTematics.bind('change', (data) => {
+		console.log('change >> ', data);
 	});
 
 	new CheckboxSelection('#test-2', {
